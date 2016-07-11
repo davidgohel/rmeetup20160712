@@ -15,7 +15,7 @@ library(ggiraph)
 library(magrittr)
 ```
 
-## { .fullpage .white}
+## { .fullpage .white }
 
 <div class="fullpage height">
 <img src="img/girafe_kaki.svg" class="cover h">
@@ -23,41 +23,46 @@ library(magrittr)
 
 <div class="double">
 
-<p class="double-flow" style="font-size:1.5em;color:#006699;font-weight:bold;">Présentation des packages `RVG` et `ggiraph`</p>
+<p class="double-flow" style="font-size:1.5em;color:#006699;font-weight:bold;">Les graphiques vectoriels avec `RVG` et `ggiraph`</p>
 
 <p class="double-flow" style="color:#006699;"><br/><br/><br/>
 <span style="font-family: 'slashfoldregular';font-size:2em;">ArData</span><br/>
-<span style="font-style:italic;font-size:.7em;">data science, consulting, formations R</span><br/>
+<span style="font-style:italic;font-size:.7em;">data science, statistique, formations R, open source</span><br/>
 david.gohel@ardata.fr<br/>R addicts Paris - 12 Juillet 2016</p>
 
 </div>
 
 ##  { .fullpage }
 
-> <span style="color:#AA9961;font-weight:bold;">Objectifs :</span><br/>Communiquer **rapidement et facilement** les graphiques produits **avec R** sans perte de **qualité** et dans les **formats usuels des entreprises**.
+> Communiquer **rapidement et facilement** les graphiques produits **avec R** sans perte de **qualité** et dans les **formats usuels des entreprises**.
 
-##  Overview
+* des *devices graphiques* R
+* produisent des graphiques vectoriels Microsoft et HTML.
+* Les formats Microsoft sont éditables.
+* Les formats HTML sont dynamiques.
+
+
+##  Galaxie - contexte d'utilisation
 
 <div style="text-align:right;">
 <span style="background-color:rgb(0, 102, 153);font-size:.5em;border-radius:10px;">&nbsp;&nbsp;&nbsp;&nbsp;outil&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
 <span style="background-color:rgb(199, 181, 112);font-size:.5em;border-radius:10px;">&nbsp;&nbsp;ggplot dynamiques&nbsp;&nbsp;</span>&nbsp;
 <span style="background-color:rgb(255, 153, 0);font-size:.5em;border-radius:10px;">&nbsp;&nbsp;graphiques R éditables&nbsp;&nbsp;</span></div>
 
-
 ```{r}
 library(networkD3)# Load data
 
 mynodes <- data.frame(
-  name = c("RVG", "ggiraph & ggplot2", "ReporteRs", "knitr ou rmarkdown", "shiny", "rstudio", "openxml"),
-  group = c("outil", "outil", "Word/PowerPoint", "htmlwidget", "htmlwidget", "htmlwidget", "Word/PowerPoint"),
-  size = c(50, 50, 25, 25, 25, 25, 25),
+  name = c("RVG", "ggiraph & ggplot2", "ReporteRs", "knitr ou rmarkdown", "shiny", "rstudio"),
+  group = c("outil", "outil", "Word/PowerPoint", "htmlwidget", "htmlwidget", "htmlwidget"),
+  size = c(50, 50, 25, 25, 25, 25),
   stringsAsFactors = FALSE
 )
 
 mylinks <- data.frame(
-  source = c(0, 0, 1, 1, 1, 0),
-  target = c(1, 2, 3, 4, 5, 6),
-  lcol = c("#999999", "#CA6259", "#CA6259", "#CA6259", "#CA6259", "#CA6259"),
+  source = c(0, 0, 1, 1, 1),
+  target = c(1, 2, 3, 4, 5),
+  lcol = c("#999999", "#CA6259", "#CA6259", "#CA6259", "#CA6259"),
   stringsAsFactors = FALSE
 )
 mylinks$value <- 3
@@ -75,8 +80,13 @@ forceNetwork(Links = mylinks, Nodes = mynodes, Nodesize = "size", zoom = TRUE,
 ```
 
 
-## Code ggplot d'exemple { .red }
 
+## Devices graphiques?{ .fullpage .white }
+
+<img src="img/que.gif" class="h" width="100%">
+
+
+## Code ggplot d'exemple { .red }
 
 ```{r echo=TRUE}
 gg_point <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Width,
@@ -86,25 +96,33 @@ gg_point <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Width,
 gg_point
 ```
 
-## Rendu vectoriel
-
-```{r}
-ggiraph(code = {print(gg_point + theme(plot.background=element_rect(fill="white", color="transparent")))}, width = 1, width_svg = 8, height_svg = 6, zoom_max = 10 )
-```
-
 ## Rendu raster
 
 <img src="img/raster.png" width="100%">
 
 
-## Graphiques éditables avec ReporteRs
+## Rendu vectoriel (sortie ggiraph)
+
+
+```{r}
+ggiraph(code = {print(gg_point + theme(plot.background=element_rect(fill="white", color="transparent")))}, width = 1, width_svg = 8, height_svg = 6, zoom_max = 10 )
+```
+
+
+
+
+## { .fullpage }
+
+<h2 class="shout">Graphiques éditables dans Microsoft Office</h2>
+
+## Avec ReporteRs
 
 ```{r echo=TRUE, results='hide', message=FALSE}
 library(ReporteRs)
 pptx() %>% 
   addSlide("Title and Content") %>% 
   addTitle("Mon graphique") %>% 
-  addPlot(fun = print, x = gg_point) %>% 
+  addPlot(fun = print, x = gg_point) %>% # le boulot de RVG
   writeDoc("assets/my_file.pptx")
 ```
 
@@ -114,41 +132,30 @@ pptx() %>%
 
 </div>
 
-## rvgaddin (Add-in RStudio)
 
-<div class="double">
-
-<ul><li>Permet l'exportation des graphiques actifs en Word/PowerPoint/Excel</li>
-<li>Pour les feignants et les *non reproductibitistes*</li>
-</ul>
+## Avec rvgaddin (Add-in RStudio)
 
 
-```{r eval=FALSE, echo=TRUE}
-if( !require("rvg") ) 
-  install.packages("rvg")
-devtools::install_github(
-  "davidgohel/rvgaddin")
-```
+Permet l'exportation des graphiques actifs en Word/PowerPoint/Excel
 
 
-<img src="img/rvgaddin.png" class="h" width="100%">
+<img src="img/rvgaddin.png" class="h" width="70%">
+
+**le boulot de RVG**
 
 
-</div>
+## { .fullpage }
 
+<h2 class="shout" style="color:#006699;">Graphiques dynamiques avec ggiraph</h2>
 
+<img src="img/goweb.gif" class="cover h" style="opacity:.5;">
 
-## Graphiques dynamiques avec ggiraph
+## Package `ggiraph`
 
-<img src="img/goweb.gif" class="cover h">
+> des fonctions `geom_*_interactive` et la fonction `ggiraph`
 
-## Présentation de `ggiraph`
-
-
-* extension de ggplot2
-* de nouvelles fonctions `geom_`
-* un htmlwidget
-* basé sur rvg et d3.js
+* mi htmlwidget mi extension de ggplot2
+* rvg pour le svg depuis R et d3.js pour l'animation
 
 
 ```{r echo=TRUE}
@@ -171,4 +178,19 @@ ggiraph(print(gg_point), width = .7, width_svg = 6, height_svg = 4.5)
 <h2 class="shout">Avec shiny</h2>
 
 https://davidgohel.shinyapps.io/demoggiraph/
+
+
+## Merci!
+
+les packages de la présentation :
+
+* https://cran.r-project.org/package=ggplot2
+* https://cran.r-project.org/package=ggiraph
+* https://cran.r-project.org/package=rvg
+* https://cran.r-project.org/package=ReporteRs
+* https://github.com/davidgohel/rvgaddin `devtools::install_github("davidgohel/rvgaddin")`
+
+## Les sources
+
+https://github.com/davidgohel/demoggiraph
 
